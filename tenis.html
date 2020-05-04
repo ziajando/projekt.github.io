@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: grey;
+        }
+        canvas{
+            border: 5px solid #fff;
+            
+        }
+    </style>
+</head>
+<body>
+    <canvas ></canvas>
+    <script>
+        const canvas = document.querySelector('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 1000;
+        canvas.height = 500;
+        const w = canvas.width;
+        const h = canvas.height;
+        const pilkaSize = 20;
+        let pilkaX = w / 2 - pilkaSize / 2
+        let pilkaY = h / 2 - pilkaSize / 2
+        const rakietkaH=100;
+        const rakietkaW=20;
+
+        const rakietkaX=70;
+        const aiX=910;
+
+        let rakietkaY=200;
+        let aiY=200;
+
+        const lineW=4;
+        const lineH=16;
+
+        let ballSpeedX=-4;
+        let ballSpeedY=3;
+
+         
+         function rakietka(){
+            context.fillStyle='blue';
+            context.fillRect(rakietkaX,rakietkaY,rakietkaW,rakietkaH);
+        }
+        function AI(){
+            context.fillStyle = 'yellow';
+            context.fillRect(aiX,aiY,rakietkaW,rakietkaH);
+        }
+        function pilka(){
+            
+            context.fillStyle = 'White';
+            context.fillRect(pilkaX, pilkaY, pilkaSize, pilkaSize);
+
+            pilkaX += ballSpeedX;
+            pilkaY += ballSpeedY;
+
+            if (pilkaY < 0 || pilkaY > h - pilkaSize)
+                ballSpeedY = -ballSpeedY;
+
+            if (pilkaX < 0) {
+                pilkaX = aiX - rakietkaW - pilkaSize / 2;
+                pilkaY = aiY + rakietkaH / 2 - pilkaSize / 2;
+                ballSpeedX = -4;
+                ballSpeedY = 3;
+            }
+            if (pilkaX > w) {
+                pilkaX = rakietkaX + rakietkaW +pilkaSize / 2;
+                pilkaY = rakietkaY + rakietkaH / 2 - pilkaSize / 2;
+                playerPoints++;
+                ballSpeedX = -4;
+                ballSpeedY = 3;
+            }
+
+            if (pilkaX <= rakietkaX+ rakietkaW && pilkaX >rakietkaX+ rakietkaW / 2) {
+                if (pilkaY < rakietkaY + rakietkaH / 2 && pilkaY > rakietkaY - pilkaSize) {
+                    ballSpeedX = -ballSpeedX
+                    ballSpeedY = -4;
+                }
+                if (pilkaY <rakietkaY+ rakietkaH && pilkaY >= rakietkaY + rakietkaH / 2) {
+                    ballSpeedY = 4;
+                    ballSpeedX = -ballSpeedX;
+                }
+                
+            }
+
+            if (pilkaX >= aiX - pilkaSize && pilkaX < aiX - pilkaSize / 2) {
+                if (pilkaY < aiY + rakietkaH && pilkaY > aiY - pilkaSize)
+                    ballSpeedX = -ballSpeedX;
+            }
+
+        }
+        function table (){
+            context.fillStyle ='green';
+            context.fillRect(0,0,w,h);
+            for(let lp=20;lp<h;lp +=30){
+                context.fillStyle ="black"
+                context.fillRect(w/2-lineW/2,lp,lineW,lineH)
+            }
+        
+        }
+        topCanvas = canvas.offsetTop;
+        console.log(top)
+
+        function pozycjaGracza(e){
+            rakietkaY = e.clientY - topCanvas - rakietkaH/2;
+            if (rakietkaY >= h -rakietkaH) {
+                rakietkaY= h - rakietkaH;
+            }
+
+            if (rakietkaY <= 0)
+                rakietkaY = 0;
+
+      }
+        function pozycjaAI(){
+            var srodekrakietki = aiY + rakietkaH/2;
+            var srodekpilki = pilkaY + pilkaSize/2;
+            if (srodekpilki < srodekrakietki)
+                aiY -= 5;
+            if (srodekpilki > srodekrakietki)
+                aiY += 5;
+
+            if (aiY >= h - rakietkaH) {
+                aiY = h - rakietkaH
+            }
+
+            if (aiY <= 0) {
+                aiY = 0;
+            }
+        }
+        
+        canvas.addEventListener('mousemove',pozycjaGracza )
+           
+        
+        function gra(){
+        table()
+        pilka()
+        rakietka()
+        AI()
+        pozycjaAI()
+        }
+        setInterval(gra,1000/60)
+        
+    </script>
+</body>
+</html>
